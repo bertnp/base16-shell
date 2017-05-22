@@ -32,9 +32,10 @@ color20="d4/cf/c9" # Base 04
 color21="f4/f1/ed" # Base 06
 color_foreground="e6/e1/dc" # Base 05
 color_background="2b/2b/2b" # Base 00
-color_cursor="e6/e1/dc" # Base 05
+color_background_tmux_format="#2b2b2b"
 
-if [ -n "$TMUX" ]; then
+TMUX_PASSTHRU="$1"
+if [ -n "$TMUX_PASSTHRU" ]; then
   # Tell tmux to pass the escape sequences through
   # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
   printf_template='\033Ptmux;\033\033]4;%d;rgb:%s\033\033\\\033\\'
@@ -80,7 +81,7 @@ printf $printf_template 21 $color21
 # foreground / background / cursor color
 if [ -n "$ITERM_SESSION_ID" ]; then
   # iTerm2 proprietary escape codes
-  printf $printf_template_custom Pg e6e1dc # forground
+  printf $printf_template_custom Pg e6e1dc # foreground
   printf $printf_template_custom Ph 2b2b2b # background
   printf $printf_template_custom Pi e6e1dc # bold color
   printf $printf_template_custom Pj 3a4055 # selection color
@@ -91,6 +92,9 @@ else
   printf $printf_template_var 10 $color_foreground
   if [ "$BASE16_SHELL_SET_BACKGROUND" != false ]; then
     printf $printf_template_var 11 $color_background
+    if [ -n "$TMUX" ]; then
+        tmux selectp -P bg="$color_background_tmux_format"
+    fi
     if [ "${TERM%%-*}" = "rxvt" ]; then
       printf $printf_template_var 708 $color_background # internal border (rxvt)
     fi
@@ -125,4 +129,3 @@ unset color20
 unset color21
 unset color_foreground
 unset color_background
-unset color_cursor

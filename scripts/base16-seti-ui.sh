@@ -1,40 +1,41 @@
 #!/bin/sh
 # base16-shell (https://github.com/chriskempson/base16-shell)
 # Base16 Shell template by Chris Kempson (http://chriskempson.com)
-# Solar Flare scheme by Chuck Harmston (https://chuck.harmston.ch)
+# Seti UI scheme by 
 
 # This script doesn't support linux console (use 'vconsole' template instead)
 if [ "${TERM%%-*}" = 'linux' ]; then
     return 2>/dev/null || exit 0
 fi
 
-color00="18/26/2F" # Base 00 - Black
-color01="EF/52/53" # Base 08 - Red
-color02="7C/C8/44" # Base 0B - Green
-color03="E4/B5/1C" # Base 0A - Yellow
-color04="33/B5/E1" # Base 0D - Blue
-color05="A3/63/D5" # Base 0E - Magenta
-color06="52/CB/B0" # Base 0C - Cyan
-color07="A6/AF/B8" # Base 05 - White
-color08="66/75/81" # Base 03 - Bright Black
+color00="15/17/18" # Base 00 - Black
+color01="Cd/3f/45" # Base 08 - Red
+color02="9f/ca/56" # Base 0B - Green
+color03="e6/cd/69" # Base 0A - Yellow
+color04="55/b5/db" # Base 0D - Blue
+color05="a0/74/c4" # Base 0E - Magenta
+color06="55/db/be" # Base 0C - Cyan
+color07="d6/d6/d6" # Base 05 - White
+color08="41/53/5B" # Base 03 - Bright Black
 color09=$color01 # Base 08 - Bright Red
 color10=$color02 # Base 0B - Bright Green
 color11=$color03 # Base 0A - Bright Yellow
 color12=$color04 # Base 0D - Bright Blue
 color13=$color05 # Base 0E - Bright Magenta
 color14=$color06 # Base 0C - Bright Cyan
-color15="F5/F7/FA" # Base 07 - Bright White
-color16="E6/6B/2B" # Base 09
-color17="D7/3C/9A" # Base 0F
-color18="22/2E/38" # Base 01
-color19="58/68/75" # Base 02
-color20="85/93/9E" # Base 04
-color21="E8/E9/ED" # Base 06
-color_foreground="A6/AF/B8" # Base 05
-color_background="18/26/2F" # Base 00
-color_cursor="A6/AF/B8" # Base 05
+color15="ff/ff/ff" # Base 07 - Bright White
+color16="db/7b/55" # Base 09
+color17="8a/55/3f" # Base 0F
+color18="8e/c4/3d" # Base 01
+color19="3B/75/8C" # Base 02
+color20="43/a5/d5" # Base 04
+color21="ee/ee/ee" # Base 06
+color_foreground="d6/d6/d6" # Base 05
+color_background="15/17/18" # Base 00
+color_background_tmux_format="#151718"
 
-if [ -n "$TMUX" ]; then
+TMUX_PASSTHRU="$1"
+if [ -n "$TMUX_PASSTHRU" ]; then
   # Tell tmux to pass the escape sequences through
   # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
   printf_template='\033Ptmux;\033\033]4;%d;rgb:%s\033\033\\\033\\'
@@ -80,17 +81,20 @@ printf $printf_template 21 $color21
 # foreground / background / cursor color
 if [ -n "$ITERM_SESSION_ID" ]; then
   # iTerm2 proprietary escape codes
-  printf $printf_template_custom Pg A6AFB8 # forground
-  printf $printf_template_custom Ph 18262F # background
-  printf $printf_template_custom Pi A6AFB8 # bold color
-  printf $printf_template_custom Pj 586875 # selection color
-  printf $printf_template_custom Pk A6AFB8 # selected text color
-  printf $printf_template_custom Pl A6AFB8 # cursor
-  printf $printf_template_custom Pm 18262F # cursor text
+  printf $printf_template_custom Pg d6d6d6 # foreground
+  printf $printf_template_custom Ph 151718 # background
+  printf $printf_template_custom Pi d6d6d6 # bold color
+  printf $printf_template_custom Pj 3B758C # selection color
+  printf $printf_template_custom Pk d6d6d6 # selected text color
+  printf $printf_template_custom Pl d6d6d6 # cursor
+  printf $printf_template_custom Pm 151718 # cursor text
 else
   printf $printf_template_var 10 $color_foreground
   if [ "$BASE16_SHELL_SET_BACKGROUND" != false ]; then
     printf $printf_template_var 11 $color_background
+    if [ -n "$TMUX" ]; then
+        tmux selectp -P bg="$color_background_tmux_format"
+    fi
     if [ "${TERM%%-*}" = "rxvt" ]; then
       printf $printf_template_var 708 $color_background # internal border (rxvt)
     fi
@@ -125,4 +129,3 @@ unset color20
 unset color21
 unset color_foreground
 unset color_background
-unset color_cursor
